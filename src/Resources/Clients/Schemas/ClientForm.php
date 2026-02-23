@@ -150,18 +150,29 @@ class ClientForm
 
                                 if ($record instanceof Model) {
                                     $uris = ClientResource::getRedirectUris($record);
-                                } elseif (is_array($state)) {
-                                    $uris = ClientResource::parseRedirectUris($state);
                                 } elseif (is_string($state) && filled($state)) {
                                     $uris = ClientResource::parseRedirectUris($state);
                                 }
 
-                                $component->state($uris ?: []);
+                                if ($uris === []) {
+                                    return;
+                                }
+
+                                $simpleFieldName = $component->getSimpleField()?->getName();
+                                $items = [];
+
+                                foreach ($uris as $uri) {
+                                    $itemData = $simpleFieldName ? [$simpleFieldName => $uri] : $uri;
+
+                                    if ($uuid = $component->generateUuid()) {
+                                        $items[$uuid] = $itemData;
+                                    } else {
+                                        $items[] = $itemData;
+                                    }
+                                }
+
+                                $component->rawState($items);
                             })
-                            ->dehydrateStateUsing(fn (mixed $state): array => array_values(array_filter(array_map(
-                                fn ($value) => is_string($value) ? trim($value) : trim((string) $value),
-                                (array) $state,
-                            ))))
                             ->required(fn (Get $get): bool => ClientResource::grantProfileRequiresRedirectUris($get('grant_profile')))
                             ->defaultItems(0)
                             ->addActionLabel(__('filament-passport::filament-passport.client.fields.add_redirect_uri'))
