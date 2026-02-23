@@ -151,6 +151,56 @@ FilamentPassportPlugin::make()
 | Implicit | no | required | no |
 | Client Credentials | yes | no | no |
 
+## PKCE Flow Helper
+
+The plugin includes a ready-made helper for consuming apps that need to authenticate against a Passport server using the Authorization Code + PKCE flow. No client secret required — ideal for SPAs and mobile apps.
+
+```php
+use Illuminate\Http\Request;
+use Webteractive\FilamentPassport\Support\PkceFlow;
+
+$pkce = PkceFlow::make(
+    clientId: config('services.passport.client_id'),
+    serverUrl: config('services.passport.url'),
+    callbackPath: '/auth/callback',
+)->scopes(['read-posts', 'create-posts']);
+
+// Redirect to the Passport authorization screen
+Route::get('/auth/redirect', fn () => $pkce->redirect());
+
+// Exchange the authorization code for tokens
+Route::get('/auth/callback', function (Request $request) use ($pkce) {
+    $tokens = $pkce->callback($request);
+
+    // $tokens contains access_token, refresh_token, token_type, expires_in
+    session(['api_token' => $tokens['access_token']]);
+
+    return redirect('/dashboard');
+});
+```
+
+The `callbackPath` can be a relative path (appended to `serverUrl`) or a full URL for cross-domain callbacks:
+
+```php
+// Same-domain callback
+PkceFlow::make('client-id', 'https://auth.example.com', '/auth/callback');
+
+// Cross-domain callback
+PkceFlow::make('client-id', 'https://auth.example.com', 'https://myapp.com/auth/callback');
+```
+
+Under the hood, `redirect()` generates a cryptographic code verifier and challenge (S256), stores them in the session, and redirects to `/oauth/authorize`. The `callback()` method validates the state parameter, exchanges the authorization code at `/oauth/token`, and returns the token response.
+
+You can also use `PkceCodePair` directly if you need just the verifier and challenge:
+
+```php
+use Webteractive\FilamentPassport\Support\PkceCodePair;
+
+$pair = PkceCodePair::generate();
+$pair->verifier;  // 128-character random string
+$pair->challenge; // base64url-encoded SHA-256 hash
+```
+
 ## Testing
 
 ```bash
