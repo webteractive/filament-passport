@@ -1,6 +1,8 @@
 # Filament Passport
 
-A [Filament](https://filamentphp.com) plugin to manage [Laravel Passport](https://laravel.com/docs/passport) OAuth clients, access tokens, and authorization codes.
+A [Filament](https://filamentphp.com) plugin to manage [Laravel Passport](https://laravel.com/docs/passport) OAuth clients, access tokens, and authorization codes. Ships with default OAuth consent views so Passport works out of the box.
+
+> **Note:** This package requires **Laravel Passport v13** (headless). Passport v12 and below are not supported.
 
 ## Requirements
 
@@ -45,7 +47,7 @@ php artisan vendor:publish --tag=filament-passport-config
 
 ## Authorization Views
 
-This package ships default OAuth consent views that work out of the box:
+Passport v13 is headless and does not include any UI. This package provides default OAuth consent views so you don't have to build them yourself:
 
 - **Authorization** — consent screen for OAuth authorization requests
 - **Device Authorization** — consent screen for device flow
