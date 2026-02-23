@@ -1,0 +1,37 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Package lock files (libraries/packages)
+/composer.lock
+/package-lock.json
+/pnpm-lock.yaml
+/yarn.lock
+
+# Test and coverage artifacts
+/.phpunit.result.cache
+/.pest-cache
+/coverage/
+/.coverage/
+/clover.xml
+
+# Static analysis and tooling caches
+/.php-cs-fixer.cache
+/.phpstan.cache
+/.phpstan/
+/.psalm/
+
+# Local environment files
+/.env
+/.env.*
+!.env.example
+
+# IDE/editor files
+/.idea/
+/.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

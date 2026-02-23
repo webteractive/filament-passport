@@ -1,0 +1,62 @@
+{
+    "name": "webteractive/filament-passport",
+    "description": "A Filament plugin to manage Laravel Passport OAuth clients, tokens, and auth codes.",
+    "keywords": [
+        "filament",
+        "laravel",
+        "passport",
+        "oauth",
+        "admin"
+    ],
+    "homepage": "https://github.com/webteractive/filament-passport",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Webteractive",
+            "email": "hello@webteractive.co",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "filament/filament": "^4.0 || ^5.0",
+        "laravel/passport": "^13.0",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "orchestra/testbench": "^9.0 || ^10.0",
+        "pestphp/pest": "^3.0 || ^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0 || ^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webteractive\\FilamentPassport\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webteractive\\FilamentPassport\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webteractive\\FilamentPassport\\FilamentPassportServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest --no-coverage",
+        "format": "vendor/bin/pint"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
