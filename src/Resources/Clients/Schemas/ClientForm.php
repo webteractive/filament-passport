@@ -121,18 +121,18 @@ class ClientForm
                             ->label(__('filament-passport::filament-passport.client.fields.confidential'))
                             ->helperText(__('filament-passport::filament-passport.client.fields.confidential_help'))
                             ->default(true)
-                            ->visible(fn (Get $get): bool => in_array($get('grant_profile'), [
+                            ->visible(fn (Get $get): bool => in_array($get('grant_profile'), array_filter([
                                 ClientResource::GrantAuthorizationCode,
-                                ClientResource::GrantDeviceAuthorization,
+                                ClientResource::supportsDeviceFlow() ? ClientResource::GrantDeviceAuthorization : null,
                                 ClientResource::GrantPassword,
-                            ], true))
+                            ]), true))
                             ->dehydrated(fn (string $operation): bool => $operation === 'create'),
 
                         Forms\Components\Toggle::make('enable_device_flow')
                             ->label(__('filament-passport::filament-passport.client.fields.enable_device_flow'))
                             ->helperText(__('filament-passport::filament-passport.client.fields.enable_device_flow_help'))
                             ->default(false)
-                            ->visible(fn (Get $get): bool => $get('grant_profile') === ClientResource::GrantAuthorizationCode)
+                            ->visible(fn (Get $get): bool => ClientResource::supportsDeviceFlow() && $get('grant_profile') === ClientResource::GrantAuthorizationCode)
                             ->dehydrated(fn (string $operation): bool => $operation === 'create'),
                     ]),
 

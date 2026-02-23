@@ -87,9 +87,14 @@ class ClientResource extends Resource
         ];
     }
 
+    public static function supportsDeviceFlow(): bool
+    {
+        return method_exists(Passport::class, 'deviceAuthorizationView');
+    }
+
     public static function getGrantProfileOptions(): array
     {
-        return [
+        $options = [
             static::GrantAuthorizationCode => __('filament-passport::filament-passport.client.grant_profiles.authorization_code'),
             static::GrantAuthorizationCodePkce => __('filament-passport::filament-passport.client.grant_profiles.authorization_code_pkce'),
             static::GrantDeviceAuthorization => __('filament-passport::filament-passport.client.grant_profiles.device_authorization'),
@@ -97,6 +102,12 @@ class ClientResource extends Resource
             static::GrantImplicit => __('filament-passport::filament-passport.client.grant_profiles.implicit'),
             static::GrantClientCredentials => __('filament-passport::filament-passport.client.grant_profiles.client_credentials'),
         ];
+
+        if (! static::supportsDeviceFlow()) {
+            unset($options[static::GrantDeviceAuthorization]);
+        }
+
+        return $options;
     }
 
     public static function grantProfileRequiresRedirectUris(?string $grantProfile): bool

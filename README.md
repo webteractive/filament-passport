@@ -2,13 +2,13 @@
 
 A [Filament](https://filamentphp.com) plugin to manage [Laravel Passport](https://laravel.com/docs/passport) OAuth clients, access tokens, and authorization codes. Ships with default OAuth consent views so Passport works out of the box.
 
-> **Note:** This package requires **Laravel Passport v13** (headless). Passport v12 and below are not supported.
+> **Note:** Device flow (Device Authorization grant) requires **Laravel Passport v13**. All other features work with Passport v12 and v13.
 
 ## Requirements
 
 - PHP 8.2+
 - Filament 4.x or 5.x
-- Laravel Passport 13.x
+- Laravel Passport 12.x or 13.x
 
 ## Installation
 
@@ -47,11 +47,11 @@ php artisan vendor:publish --tag=filament-passport-config
 
 ## Authorization Views
 
-Passport v13 is headless and does not include any UI. This package provides default OAuth consent views so you don't have to build them yourself:
+This package provides default OAuth consent views so you don't have to build them yourself:
 
-- **Authorization** — consent screen for OAuth authorization requests
-- **Device Authorization** — consent screen for device flow
-- **Device User Code** — form for entering a device code
+- **Authorization** — consent screen for OAuth authorization requests (v12 & v13)
+- **Device Authorization** — consent screen for device flow (v13 only)
+- **Device User Code** — form for entering a device code (v13 only)
 
 ### Customizing Views
 
@@ -146,7 +146,7 @@ FilamentPassportPlugin::make()
 |---|---|---|---|
 | Authorization Code | configurable | required | optional |
 | Authorization Code (PKCE) | no | required | no |
-| Device Authorization | configurable | no | yes |
+| Device Authorization *(v13 only)* | configurable | no | yes |
 | Password | configurable | no | no |
 | Implicit | no | required | no |
 | Client Credentials | yes | no | no |
