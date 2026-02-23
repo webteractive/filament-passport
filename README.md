@@ -67,6 +67,20 @@ This copies the views to `resources/views/vendor/filament-passport/` where they 
 
 If you prefer to register views yourself via Passport's API, call `Passport::authorizationView()` or `Passport::viewPrefix()` in your `AppServiceProvider::boot()` — your bindings will overwrite the defaults.
 
+```php
+use Laravel\Passport\Passport;
+
+public function boot(): void
+{
+    // Option 1: Set a view prefix — Passport will look for views
+    // under resources/views/my-custom-views/ (e.g. my-custom-views.authorize)
+    Passport::viewPrefix('my-custom-views.');
+
+    // Option 2: Set a specific authorization view
+    Passport::authorizationView('my-custom-views.authorize');
+}
+```
+
 To skip the default bindings entirely:
 
 ```php
