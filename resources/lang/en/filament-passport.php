@@ -12,6 +12,7 @@ return [
         'sections' => [
             'details' => 'Client Details',
             'usage_instructions' => 'Usage Instructions',
+            'endpoints' => 'Endpoints',
         ],
 
         'fields' => [
@@ -73,6 +74,14 @@ return [
             'revoke' => 'Revoke',
             'restore' => 'Restore',
             'bulk_revoke' => 'Revoke Selected',
+        ],
+
+        'endpoints' => [
+            'authorization_url' => 'Authorization URL',
+            'token_url' => 'Token URL',
+            'device_code_url' => 'Device Code URL',
+            'callback_url' => 'Callback URL',
+            'copied' => 'Copied!',
         ],
 
         'usage_instructions' => [

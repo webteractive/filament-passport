@@ -5,6 +5,7 @@ namespace Webteractive\FilamentPassport\Resources\Clients\Schemas;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Webteractive\FilamentPassport\Resources\Clients\ClientResource;
@@ -28,6 +29,65 @@ class ClientForm
         }
 
         return [__('filament-passport::filament-passport.client.usage_instructions.default')];
+    }
+
+    /**
+     * @return array<int, Forms\Components\TextInput>
+     */
+    public static function resolveEndpointFields(string $grantProfile, Model $record): array
+    {
+        $fields = [];
+
+        $grantsWithAuthorizationUrl = [
+            ClientResource::GrantAuthorizationCode,
+            ClientResource::GrantAuthorizationCodePkce,
+            ClientResource::GrantImplicit,
+        ];
+
+        if (in_array($grantProfile, $grantsWithAuthorizationUrl, true)) {
+            $fields[] = Forms\Components\TextInput::make('authorization_url')
+                ->label(__('filament-passport::filament-passport.client.endpoints.authorization_url'))
+                ->afterStateHydrated(fn (Forms\Components\TextInput $component) => $component->state(url('/oauth/authorize')))
+                ->readOnly()
+                ->dehydrated(false)
+                ->copyable(true, __('filament-passport::filament-passport.client.endpoints.copied'));
+        }
+
+        if ($grantProfile !== ClientResource::GrantImplicit) {
+            $fields[] = Forms\Components\TextInput::make('token_url')
+                ->label(__('filament-passport::filament-passport.client.endpoints.token_url'))
+                ->afterStateHydrated(fn (Forms\Components\TextInput $component) => $component->state(url('/oauth/token')))
+                ->readOnly()
+                ->dehydrated(false)
+                ->copyable(true, __('filament-passport::filament-passport.client.endpoints.copied'));
+        }
+
+        if ($grantProfile === ClientResource::GrantDeviceAuthorization) {
+            $fields[] = Forms\Components\TextInput::make('device_code_url')
+                ->label(__('filament-passport::filament-passport.client.endpoints.device_code_url'))
+                ->afterStateHydrated(fn (Forms\Components\TextInput $component) => $component->state(url('/oauth/device/code')))
+                ->readOnly()
+                ->dehydrated(false)
+                ->copyable(true, __('filament-passport::filament-passport.client.endpoints.copied'));
+        }
+
+        if (ClientResource::grantProfileRequiresRedirectUris($grantProfile)) {
+            $redirectUris = ClientResource::getRedirectUris($record);
+
+            foreach ($redirectUris as $index => $uri) {
+                $label = __('filament-passport::filament-passport.client.endpoints.callback_url');
+                $suffix = count($redirectUris) > 1 ? ' '.($index + 1) : '';
+
+                $fields[] = Forms\Components\TextInput::make("callback_url_{$index}")
+                    ->label($label.$suffix)
+                    ->afterStateHydrated(fn (Forms\Components\TextInput $component) => $component->state($uri))
+                    ->readOnly()
+                    ->dehydrated(false)
+                    ->copyable(true, __('filament-passport::filament-passport.client.endpoints.copied'));
+            }
+        }
+
+        return $fields;
     }
 
     public static function configure(Schema $schema): Schema
@@ -147,15 +207,24 @@ class ClientForm
                         }
 
                         $grantProfile = ClientResource::inferGrantProfileFromRecord($record);
-                        $instructions = static::resolveUsageInstructions($grantProfile);
 
-                        return array_map(
+                        $endpointFields = static::resolveEndpointFields($grantProfile, $record);
+
+                        $instructions = static::resolveUsageInstructions($grantProfile);
+                        $instructionFields = array_map(
                             static fn (string $step, int $index): Forms\Components\Placeholder => Forms\Components\Placeholder::make("usage_step_{$index}")
                                 ->hiddenLabel()
                                 ->content($step),
                             $instructions,
                             array_keys($instructions),
                         );
+
+                        return [
+                            Fieldset::make(__('filament-passport::filament-passport.client.sections.endpoints'))
+                                ->schema($endpointFields)
+                                ->columns(1),
+                            ...$instructionFields,
+                        ];
                     }),
             ]);
     }
