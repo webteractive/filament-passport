@@ -49,13 +49,18 @@ return [
     |--------------------------------------------------------------------------
     |
     | This package registers default OAuth consent views for Passport.
-    | Set enabled to false if you prefer to register your own views
-    | via Passport::authorizationView() or Passport::viewPrefix().
+    | Set enabled to false to disable all view registration, or set
+    | individual views to a custom view name or null to skip that
+    | specific view while keeping the others.
     |
     */
 
     'views' => [
         'enabled' => true,
+
+        'authorization' => 'filament-passport::authorize',
+        'device_authorization' => 'filament-passport::device.authorize',
+        'device_user_code' => 'filament-passport::device.user-code',
     ],
 
 ];

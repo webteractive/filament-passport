@@ -65,23 +65,44 @@ This copies the views to `resources/views/vendor/filament-passport/` where they 
 
 ### Using Your Own Views
 
-If you prefer to register views yourself via Passport's API, call `Passport::authorizationView()` or `Passport::viewPrefix()` in your `AppServiceProvider::boot()` — your bindings will overwrite the defaults.
+You can override individual views via config — set a custom view name or `null` to skip registration for that view:
 
 ```php
+// config/filament-passport.php
+'views' => [
+    'enabled' => true,
+
+    // Set to a custom view name, or null to skip
+    'authorization' => 'my-custom-views.authorize',
+    'device_authorization' => 'filament-passport::device.authorize',
+    'device_user_code' => 'filament-passport::device.user-code',
+],
+```
+
+For example, [Laravel MCP](https://laravel.com/docs/mcp) requires its own authorization view for AI agent OAuth consent. Set `authorization` to `null` so this package skips it, then register the MCP view in your `AppServiceProvider`:
+
+```php
+// config/filament-passport.php
+'views' => [
+    'enabled' => true,
+
+    'authorization' => null, // Let MCP handle this
+    'device_authorization' => 'filament-passport::device.authorize',
+    'device_user_code' => 'filament-passport::device.user-code',
+],
+```
+
+```php
+// app/Providers/AppServiceProvider.php
 use Laravel\Passport\Passport;
 
 public function boot(): void
 {
-    // Option 1: Set a view prefix — Passport will look for views
-    // under resources/views/my-custom-views/ (e.g. my-custom-views.authorize)
-    Passport::viewPrefix('my-custom-views.');
-
-    // Option 2: Set a specific authorization view
-    Passport::authorizationView('my-custom-views.authorize');
+    Passport::authorizationView(fn ($parameters) => view('mcp.authorize', $parameters));
 }
 ```
 
-To skip the default bindings entirely:
+To skip all view bindings entirely:
 
 ```php
 // config/filament-passport.php

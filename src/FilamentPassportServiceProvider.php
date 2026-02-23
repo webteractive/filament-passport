@@ -28,11 +28,24 @@ class FilamentPassportServiceProvider extends PackageServiceProvider
 
     protected function registerPassportViews(): void
     {
-        Passport::authorizationView('filament-passport::authorize');
+        $view = config('filament-passport.views.authorization', 'filament-passport::authorize');
+
+        if ($view) {
+            Passport::authorizationView($view);
+        }
 
         if (method_exists(Passport::class, 'deviceAuthorizationView')) {
-            Passport::deviceAuthorizationView('filament-passport::device.authorize');
-            Passport::deviceUserCodeView('filament-passport::device.user-code');
+            $deviceView = config('filament-passport.views.device_authorization', 'filament-passport::device.authorize');
+
+            if ($deviceView) {
+                Passport::deviceAuthorizationView($deviceView);
+            }
+
+            $userCodeView = config('filament-passport.views.device_user_code', 'filament-passport::device.user-code');
+
+            if ($userCodeView) {
+                Passport::deviceUserCodeView($userCodeView);
+            }
         }
     }
 }
