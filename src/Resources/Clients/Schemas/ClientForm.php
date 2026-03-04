@@ -103,7 +103,7 @@ class ClientForm
                             ->hiddenOn('create')
                             ->dehydrated(false)
                             ->readOnly()
-                            ->copyable(true, 'Client ID copied')
+                            ->copyable(true, __('filament-passport::filament-passport.client.notifications.client_id_copied'))
                             ->afterStateHydrated(function (Forms\Components\TextInput $component, mixed $state, ?Model $record): void {
                                 if (! $record instanceof Model) {
                                     return;

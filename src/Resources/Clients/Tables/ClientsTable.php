@@ -91,7 +91,7 @@ class ClientsTable
                                     ->state(fn (Model $record): string => (string) $record->getKey())
                                     ->copyable()
                                     ->copyableState(fn (Model $record): string => (string) $record->getKey())
-                                    ->copyMessage('Client ID copied')
+                                    ->copyMessage(__('filament-passport::filament-passport.client.notifications.client_id_copied'))
                                     ->copyMessageDuration(1500),
 
                                 Infolists\Components\TextEntry::make('name')
@@ -113,7 +113,7 @@ class ClientsTable
                                     ->state(fn (Model $record): string => ClientResource::resolveDisplayableClientSecret($record))
                                     ->copyable(fn (Model $record): bool => ClientResource::resolveCopyableClientSecret($record) !== null)
                                     ->copyableState(fn (Model $record): ?string => ClientResource::resolveCopyableClientSecret($record))
-                                    ->copyMessage('Client secret copied')
+                                    ->copyMessage(__('filament-passport::filament-passport.client.notifications.client_secret_copied'))
                                     ->copyMessageDuration(1500),
 
                                 Infolists\Components\TextEntry::make('redirect_uris')
@@ -122,7 +122,7 @@ class ClientsTable
                                     ->listWithLineBreaks()
                                     ->copyable(fn (Model $record): bool => ClientResource::getRedirectUris($record) !== [])
                                     ->copyableState(fn (Model $record): string => implode(PHP_EOL, ClientResource::getRedirectUris($record)))
-                                    ->copyMessage('Redirect URI(s) copied')
+                                    ->copyMessage(__('filament-passport::filament-passport.client.notifications.redirect_uris_copied'))
                                     ->copyMessageDuration(1500)
                                     ->placeholder('—'),
 

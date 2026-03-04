@@ -120,7 +120,11 @@ return [
         'notifications' => [
             'created' => 'Client created successfully.',
             'client_id' => 'Client ID',
+            'client_id_copied' => 'Client ID copied',
             'client_secret' => 'Client Secret',
+            'client_secret_copied' => 'Client secret copied',
+            'redirect_uris_label' => 'Redirect URI(s):',
+            'redirect_uris_copied' => 'Redirect URI(s) copied',
             'secret_unavailable' => 'Unavailable in this request',
             'public_client' => 'Public client (no secret)',
             'next_steps' => 'Next steps:',
@@ -167,6 +171,7 @@ return [
         ],
 
         'notifications' => [
+            'token_id_copied' => 'Token ID copied',
             'revoked' => 'Token has been revoked.',
             'bulk_revoked' => 'Selected tokens have been revoked.',
         ],

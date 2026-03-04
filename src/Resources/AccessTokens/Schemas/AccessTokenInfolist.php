@@ -17,7 +17,7 @@ class AccessTokenInfolist
                         Infolists\Components\TextEntry::make('id')
                             ->label(__('filament-passport::filament-passport.access_token.columns.id'))
                             ->copyable()
-                            ->copyMessage('Token ID copied')
+                            ->copyMessage(__('filament-passport::filament-passport.access_token.notifications.token_id_copied'))
                             ->copyMessageDuration(1500),
 
                         Infolists\Components\TextEntry::make('name')

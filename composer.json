@@ -57,6 +57,6 @@
         "test": "vendor/bin/pest --no-coverage",
         "format": "vendor/bin/pint"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

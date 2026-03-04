@@ -7,6 +7,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Webteractive\FilamentPassport\Support\PassportClientManager;
 use Webteractive\FilamentPassport\Resources\Clients\ClientResource;
+use Webteractive\FilamentPassport\Resources\Clients\Schemas\ClientForm;
 
 class CreateClient extends CreateRecord
 {
@@ -91,7 +92,7 @@ class CreateClient extends CreateRecord
         }
 
         return [
-            'Redirect URI(s):',
+            __('filament-passport::filament-passport.client.notifications.redirect_uris_label'),
             ...array_map(
                 static fn (string $redirectUri): string => '- '.$redirectUri,
                 $this->createdRedirectUris,
@@ -104,37 +105,6 @@ class CreateClient extends CreateRecord
      */
     protected function resolveFlowInstructions(): array
     {
-        return match ($this->createdGrantProfile) {
-            ClientResource::GrantAuthorizationCode => [
-                '1. Redirect the user to /oauth/authorize with response_type=code, client_id, redirect_uri, scope, and state.',
-                '2. Exchange the code at POST /oauth/token with grant_type=authorization_code, client_id, client_secret, redirect_uri, and code.',
-            ],
-            ClientResource::GrantAuthorizationCodePkce => [
-                '1. PKCE clients are public: use client_id + redirect_uri (no client_secret).',
-                '2. Generate code_verifier and code_challenge (S256) in your app for each authorization request.',
-                '3. Redirect to /oauth/authorize with response_type=code, client_id, redirect_uri, state, code_challenge, and code_challenge_method=S256.',
-                '4. Exchange at POST /oauth/token with grant_type=authorization_code, client_id, redirect_uri, code, and code_verifier.',
-            ],
-            ClientResource::GrantDeviceAuthorization => [
-                '1. Request a device code via POST /oauth/device/code with client_id, scope, and client_secret if confidential.',
-                '2. Show verification_uri and user_code to the user.',
-                '3. Poll POST /oauth/token with grant_type=urn:ietf:params:oauth:grant-type:device_code, client_id, device_code, and client_secret if confidential.',
-            ],
-            ClientResource::GrantPassword => [
-                '1. Enable the password grant in AppServiceProvider with Passport::enablePasswordGrant().',
-                '2. Request tokens from POST /oauth/token with grant_type=password, client_id, username, password, scope, and client_secret if confidential.',
-            ],
-            ClientResource::GrantImplicit => [
-                '1. Enable implicit grant in AppServiceProvider with Passport::enableImplicitGrant().',
-                '2. Redirect to /oauth/authorize with response_type=token, client_id, redirect_uri, scope, and state.',
-            ],
-            ClientResource::GrantClientCredentials => [
-                '1. Request a token from POST /oauth/token with grant_type=client_credentials, client_id, client_secret, and scope.',
-                '2. Protect machine-to-machine routes with Passport client middleware.',
-            ],
-            default => [
-                '1. Use /oauth/authorize to request authorization and /oauth/token to exchange for access tokens.',
-            ],
-        };
+        return ClientForm::resolveUsageInstructions($this->createdGrantProfile ?? 'default');
     }
 }
